@@ -7,7 +7,7 @@ const transactionSchema = new mongoose.Schema({
 });
 
 const loanSchema = new mongoose.Schema({
-  customerId: String,
+  customerId: Number,
   principal: Number,
   loanPeriod: Number,
   interestRate: Number,

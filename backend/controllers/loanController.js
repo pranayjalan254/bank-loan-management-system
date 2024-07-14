@@ -1,4 +1,5 @@
 const Loan = require("../models/Loan");
+const mongoose = require("mongoose");
 
 const calculateEMI = (principal, rate, period) => {
   const monthlyRate = rate / (12 * 100);
@@ -13,7 +14,7 @@ const lendMoney = async (req, res) => {
   try {
     const { customerId, loanAmount, loanPeriod, interestRate } = req.body;
     const totalInterest = (loanAmount * loanPeriod * interestRate) / 100;
-    const totalAmount = loanAmount + totalInterest;
+    const totalAmount = Number(loanAmount) + Number(totalInterest);
     const monthlyEMI = calculateEMI(loanAmount, interestRate, loanPeriod);
 
     const loan = new Loan({
@@ -65,6 +66,11 @@ const makePayment = async (req, res) => {
 const getLedger = async (req, res) => {
   try {
     const { loanId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(loanId)) {
+      return res.status(400).send("Invalid loanId");
+    }
+
     const loan = await Loan.findById(loanId);
 
     if (!loan) {

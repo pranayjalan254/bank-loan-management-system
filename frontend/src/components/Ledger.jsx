@@ -8,7 +8,7 @@ const Ledger = ({ loanId }) => {
     const fetchLedger = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/ledger/${customerId}`
+          `http://localhost:5000/api/ledger/${loanId}`
         );
         setLedger(response.data);
       } catch (error) {
@@ -16,7 +16,9 @@ const Ledger = ({ loanId }) => {
       }
     };
 
-    fetchLedger();
+    if (loanId) {
+      fetchLedger();
+    }
   }, [loanId]);
 
   if (!ledger) {
@@ -25,18 +27,18 @@ const Ledger = ({ loanId }) => {
 
   return (
     <div>
-      <h2>Ledger for Loan ID: {customerId}</h2>
+      <h2>Ledger for Loan ID: {loanId}</h2>
       <ul>
         {ledger.transactions.map((transaction) => (
           <li key={transaction._id}>
-            {transaction.type}: ${transaction.amount} on{" "}
+            {transaction.type}: ₹{transaction.amount} on{" "}
             {new Date(transaction.date).toLocaleDateString()}
           </li>
         ))}
       </ul>
-      <p>Balance: {balance}</p>
-      <p>Monthly EMI: {monthlyEMI}</p>
-      <p>EMIs Left: {EMIsLeft}</p>
+      <p>Balance: ₹{ledger.balance}</p>
+      <p>Monthly EMI: ₹{ledger.monthlyEMI}</p>
+      <p>EMIs Left: {ledger.EMIsLeft}</p>
     </div>
   );
 };
