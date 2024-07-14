@@ -97,7 +97,7 @@ const getAccountOverview = async (req, res) => {
       totalAmount: loan.totalAmount,
       EMI: loan.monthlyEMI,
       totalInterest: loan.totalAmount - loan.principal,
-      amountPaid: loan.principal + loan.totalAmount - loan.balance,
+      amountPaid: loan.totalAmount - loan.balance,
       EMIsLeft: loan.EMIsLeft,
     }));
 
