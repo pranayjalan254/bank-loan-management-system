@@ -13,9 +13,9 @@ const calculateEMI = (principal, rate, period) => {
 const lendMoney = async (req, res) => {
   try {
     const { customerId, loanAmount, loanPeriod, interestRate } = req.body;
-    const totalInterest = (loanAmount * loanPeriod * interestRate) / 100;
-    const totalAmount = Number(loanAmount) + Number(totalInterest);
     const monthlyEMI = calculateEMI(loanAmount, interestRate, loanPeriod);
+    const totalInterest = monthlyEMI * loanPeriod * 12 - loanAmount;
+    const totalAmount = Number(loanAmount) + Number(totalInterest);
 
     const loan = new Loan({
       customerId,
@@ -47,16 +47,22 @@ const makePayment = async (req, res) => {
     }
 
     if (type === "EMI") {
-      loan.balance -= loan.monthlyEMI;
+      loan.balance -= amount;
       loan.EMIsLeft -= 1;
     } else {
       loan.balance -= amount;
     }
 
+    loan.monthlyEMI = calculateEMI(
+      loan.balance,
+      loan.interestRate,
+      loan.loanPeriod
+    );
+
     loan.transactions.push({ type, amount });
     await loan.save();
 
-    res.json({ balance: loan.balance });
+    res.json({ balance: loan.balance, monthlyEMI: loan.monthlyEMI });
   } catch (error) {
     console.error("Error in makePayment:", error);
     res.status(500).send("Internal Server Error");
