@@ -14,7 +14,7 @@ const lendMoney = async (req, res) => {
   try {
     const { customerId, loanAmount, loanPeriod, interestRate } = req.body;
     const monthlyEMI = calculateEMI(loanAmount, interestRate, loanPeriod);
-    const totalInterest = monthlyEMI * loanPeriod * 12 - loanAmount;
+    const totalInterest = (loanAmount * interestRate * loanPeriod) / 100;
     const totalAmount = Number(loanAmount) + Number(totalInterest);
 
     const loan = new Loan({
