@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const loanRoutes = require("./routes/loanRoutes");
+require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -12,7 +13,7 @@ app.use(express.json());
 app.use("/api", loanRoutes);
 
 mongoose
-  .connect("mongodb://localhost:27017/bank-loan-management-system")
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("Connected to MongoDB");
   })
